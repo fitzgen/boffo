@@ -1,0 +1,12 @@
+{application, boffo_mgr,
+ [
+  {description, ""},
+  {vsn, "1"},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib
+                 ]},
+  {mod, { boffo_mgr_app, []}},
+  {env, []}
+ ]}.

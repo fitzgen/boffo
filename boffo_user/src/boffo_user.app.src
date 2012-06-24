@@ -1,0 +1,12 @@
+{application, boffo_user,
+ [
+  {description, ""},
+  {vsn, "1"},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib
+                 ]},
+  {mod, { boffo_user_app, []}},
+  {env, []}
+ ]}.
