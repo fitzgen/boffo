@@ -7,8 +7,11 @@
 -author("Mochi Media <dev@mochimedia.com>").
 
 -behaviour(application).
--export([start/2,stop/1]).
+-export([start/0, start/2,stop/1]).
 
+
+start() ->
+    start(normal, []).
 
 %% @spec start(_Type, _StartArgs) -> ServerRet
 %% @doc application start callback for boffo_frontend.

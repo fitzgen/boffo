@@ -23,7 +23,6 @@ start_link() ->
 %% ===================================================================
 
 init([]) ->
-    %% TODO: start token server
     Token_Server = {boffo_auth_token,
                     {boffo_auth_token, start_link, []},
                     transient,
