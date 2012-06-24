@@ -7,3 +7,7 @@
 */TEST-*.xml
 */deps
 *.swp
+settings.hrl
+dev.sh
+erl_crash.dump
+.boffo-token-db
