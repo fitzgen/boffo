@@ -3,7 +3,7 @@
 -include_lib("stdlib/include/qlc.hrl").
 
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
--export([start_link/0, register/2, find/1]).
+-export([start_link/0, register/2, find/1, authenticate/2, change_password/3]).
 
 -include("$BOFFO_SETTINGS").
 
@@ -27,8 +27,8 @@ register(Username, Password) ->
 authenticate(Username, Password) ->
     gen_server:call(?MODULE, {authenticate, Username, Password}).
 
-change_password(Username, Password) ->
-    gen_server:call(?MODULE, {change_password, Username, Password}).
+change_password(Username, Old_Password, New_Password) ->
+    gen_server:call(?MODULE, {change_password, Username, Old_Password, New_Password}).
 
 list() ->
     gen_server:call(?MODULE, {list}).
@@ -44,22 +44,74 @@ handle_call({register, Username, Password}, _From, State) ->
 			 salt=Salt,
 			 timestamp=now()},
 	    F = fun() -> mnesia:write(User) end,
-	    {reply, mnesia:transaction(F), State};
+	    case mnesia:transaction(F) of
+		{atomic, Result} ->
+		    {reply, {ok, Result}, State};
+		{aborted, Reason} ->
+		    {reply, {error, Reason}, State}
+	    end;
 	{ok, _} ->
 	    {reply, {error, "Username taken"}, State}
 	end;
 
 handle_call({authenticate, Username, Password}, _From, State) ->
-    {error, "Not Implemented"};
-
+    case authenticate_user(Username, Password) of
+	{ok, true} ->
+	    {reply, {ok, true}, State};
+	{ok, false} ->
+	    {reply, {ok, false}, State}
+    end;
 
 handle_call({change_password, Username, Old_Password, New_Password}, _From, State) ->
-    {error, "Not Implemented"};
+    case authenticate_user(Username, Old_Password) of
+	{ok, true} ->
+	    {ok, User} = find(Username),
+	    {ok, New_Salt} = bcrypt:gen_salt(),
+	    F = fun() -> 
+	        mnesia:write(User#user{password=bcrypt:hashpw(New_Password, New_Salt), 
+				       salt=New_Salt}) 
+	    end,
+	    case mnesia:transaction(F) of
+		{atomic, Result} ->
+		    {reply, {ok, Result}, State};
+		{aborted, Reason} ->
+		    {reply, {error, Reason}, State}
+	    end;
+	{ok, false} ->
+	    {reply, {error, "Old password does not match"}, State};
+	{error, Reason} ->
+	    {reply, {error, Reason}, State}
+    end;
 
-handle_call({list}, _From, State) ->
+
+handle_call({list}, _From, _State) ->
     {error, "Not Implemented"}.
 
 %% Utilities
+authenticate_user(Username, Password) ->
+    case find(Username) of
+	{ok, User} ->
+	    Pid = self(),
+	    Check_Auth = fun() ->
+                Actual = User#user.password,				 
+                case bcrypt:hashpw(Password, User#user.salt) of
+		    Actual ->
+			Pid ! User;
+		    _ ->
+			ok
+		end
+	    end,
+	    spawn(Check_Auth),
+	    receive
+		User ->
+		    {ok, true}
+	    after 2000 ->
+		    {ok, false}
+	    end;
+	{error, Reason} ->
+	    {error, Reason}
+    end.
+
 find(Username) ->
     Q = qlc:q([X || X <- mnesia:table(user), 
 		    X#user.username =:= Username]),
@@ -70,14 +122,6 @@ find(Username) ->
 	    {error, "Not found"};
 	{aborted, Reason} ->
 	    {error, Reason}
-    end.
-
-exists(Username) ->
-    case find(Username) of
-	{ok, _} ->
-	    true;
-	{error, _} ->
-	    false
     end.
 
 
@@ -92,7 +136,7 @@ ensure_schema() ->
 		 {error, {Node, {already_exists, Node}}} ->
 		     ok;
 		 {error, Error} ->
-		     ok
+		     {error, Error}
 	     end,
     mnesia:start(),
     Result.
@@ -106,7 +150,7 @@ ensure_user_table() ->
     case Res of
 	{atomic, ok} ->
 	    ok;
-	{aborted, Reason} ->
+	{aborted, _} ->
 	    ok
     end.
 
