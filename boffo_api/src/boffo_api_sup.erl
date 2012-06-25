@@ -1,4 +1,5 @@
--module(boffo_auth_sup).
+
+-module(boffo_api_sup).
 
 -behaviour(supervisor).
 
@@ -23,12 +24,5 @@ start_link() ->
 %% ===================================================================
 
 init([]) ->
-    pg2:create(boffo_auth_token_server),
-    Token_Server = {boffo_auth_token,
-                    {boffo_auth_token, start_link, []},
-                    transient,
-                    500,
-                    worker,
-                    [boffo_auth_token]},
-    %% TODO: start passwd server
-    {ok, { {one_for_one, 5, 10}, [Token_Server]} }.
+    {ok, { {one_for_one, 5, 10}, []} }.
+

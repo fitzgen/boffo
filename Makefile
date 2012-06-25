@@ -1,4 +1,4 @@
-BOFFO_APPS:=auth frontend game mgr user
+BOFFO_APPS:=api auth frontend game mgr user
 DEVSCRIPT_FILE:=dev.sh
 
 all: $(BOFFO_APPS) devscript
