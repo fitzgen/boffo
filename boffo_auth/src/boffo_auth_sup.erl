@@ -24,11 +24,10 @@ start_link() ->
 
 init([]) ->
     pg2:create(boffo_auth_token_server),
-    Token_Server = {boffo_auth_token,
-                    {boffo_auth_token, start_link, []},
-                    transient,
-                    500,
-                    worker,
-                    [boffo_auth_token]},
-    %% TODO: start passwd server
-    {ok, { {one_for_one, 5, 10}, [Token_Server]} }.
+    mnesia:start(),
+    Token_Server = make_process(boffo_auth_token),
+    Passwd_Server = make_process(boffo_auth_passwd),
+    {ok, { {one_for_one, 5, 10}, [Token_Server, Passwd_Server]} }.
+
+make_process(Mod) ->
+    {Mod, {Mod, start_link, []}, permanent, 500, worker, [Mod]}.
