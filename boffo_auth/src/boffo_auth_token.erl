@@ -9,8 +9,7 @@
 %% Public API
 
 start_link() ->
-    {ok, Pid} = gen_server:start_link({local, ?MODULE},
-                                      ?MODULE,
+    {ok, Pid} = gen_server:start_link(?MODULE,
                                       [{file, ?BOFFO_AUTH_TOKEN_DB},
                                        {type, set}],
                                       []),
