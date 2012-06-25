@@ -2,28 +2,20 @@
 -behaviour(gen_server).
 
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
--export([start_link/0, get_user/1, create_token/1, delete_token/1]).
+-export([start_link/0]).
 
 -include("$BOFFO_SETTINGS").
 
 %% Public API
 
 start_link() ->
-    gen_server:start_link({local, ?MODULE},
-                          ?MODULE,
-                          [{file, ?BOFFO_AUTH_TOKEN_DB},
-                           {type, set}],
-                          []).
-
-get_user(Token) ->
-    gen_server:call(?MODULE, {get, Token}).
-
-create_token(User) ->
-    gen_server:call(?MODULE, {create, User}).
-
-delete_token(Token) ->
-    gen_server:call(?MODULE, {delete, Token}).
-
+    {ok, Pid} = gen_server:start_link({local, ?MODULE},
+                                      ?MODULE,
+                                      [{file, ?BOFFO_AUTH_TOKEN_DB},
+                                       {type, set}],
+                                      []),
+    pg2:join(boffo_auth_token_server, Pid),
+    {ok, Pid}.
 
 %% Gen_server interface
 

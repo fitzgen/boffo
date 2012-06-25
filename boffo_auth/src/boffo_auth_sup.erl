@@ -23,6 +23,7 @@ start_link() ->
 %% ===================================================================
 
 init([]) ->
+    pg2:create(boffo_auth_token_server),
     Token_Server = {boffo_auth_token,
                     {boffo_auth_token, start_link, []},
                     transient,
