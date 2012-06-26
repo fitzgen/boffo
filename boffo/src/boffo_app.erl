@@ -1,4 +1,4 @@
--module(boffo_api_app).
+-module(boffo_app).
 
 -behaviour(application).
 
