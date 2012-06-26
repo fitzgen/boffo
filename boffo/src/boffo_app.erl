@@ -1,4 +1,4 @@
--module(boffo_api_app).
+-module(boffo_app).
 
 -behaviour(application).
 
@@ -13,7 +13,7 @@ start() ->
     start(normal, []).
 
 start(_StartType, _StartArgs) ->
-    boffo_api_sup:start_link().
+    boffo_sup:start_link().
 
 stop(_State) ->
     ok.

@@ -1,5 +1,4 @@
-
--module(boffo_api_sup).
+-module(boffo_sup).
 
 -behaviour(supervisor).
 
