@@ -8,10 +8,6 @@ all: devscript
 	  $(MAKE) --directory=$$app $(TARGET); \
 	done
 
-
-boffo_auth:
-	$(MAKE) --directory=$@ $(TARGET)
-
 devscript:
 	echo "#!/usr/bin/env sh"                                 > $(DEVSCRIPT_FILE)
 	echo "exec erl \\"										>> $(DEVSCRIPT_FILE)
