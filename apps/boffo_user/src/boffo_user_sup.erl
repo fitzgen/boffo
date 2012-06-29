@@ -24,5 +24,6 @@ start_link() ->
 %% ===================================================================
 
 init([]) ->
-    {ok, { {one_for_one, 5, 10}, []} }.
+    Status_Server = ?CHILD(boffo_user_status, worker),
+    {ok, { {one_for_one, 5, 10}, [Status_Server]} }.
 
