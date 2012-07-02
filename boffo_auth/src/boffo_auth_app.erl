@@ -14,10 +14,10 @@ start() ->
 start(_StartType, _StartArgs) ->
     crypto:start(),
     bcrypt:start(),
-    
-    ensure_schema(),
+
+    boffo_util:ensure_mnesia_schema(node()),
     mnesia:start(),
-    
+
     pg2:create(boffo_auth_token_server),
     pg2:create(boffo_auth_passwd_server),
 
@@ -27,15 +27,3 @@ start(_StartType, _StartArgs) ->
 
 stop(_State) ->
     ok.
-
-ensure_schema() ->
-    Node = node(),
-    case mnesia:create_schema([Node]) of
-	ok ->
-	    ok;
-	{error, {Node, {already_exists, Node}}} ->
-	    ok;
-	{error, Error} ->
-	    {error, Error}
-    end.
-    

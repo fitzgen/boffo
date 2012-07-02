@@ -48,9 +48,9 @@ handle_call({change_password, Username, Old_Password, New_Password}, _From, Stat
         {ok, true} ->
             {ok, User} = find(Username),
             {ok, New_Salt} = bcrypt:gen_salt(),
-            F = fun() -> 
-                mnesia:write(User#user{password=bcrypt:hashpw(New_Password, New_Salt), 
-                                       salt=New_Salt}) 
+            F = fun() ->
+                mnesia:write(User#user{password=bcrypt:hashpw(New_Password, New_Salt),
+                                       salt=New_Salt})
 	    end,
             case mnesia:transaction(F) of
                 {atomic, Result} ->
@@ -71,7 +71,7 @@ authenticate_user(Username, Password) ->
         {ok, User} ->
             Pid = self(),
             Check_Auth = fun() ->
-                Actual = User#user.password,                             
+                Actual = User#user.password,
                 case bcrypt:hashpw(Password, User#user.salt) of
                     Actual ->
                         Pid ! User;
@@ -91,7 +91,7 @@ authenticate_user(Username, Password) ->
     end.
 
 find(Username) ->
-    Q = qlc:q([X || X <- mnesia:table(user), 
+    Q = qlc:q([X || X <- mnesia:table(user),
                     X#user.username =:= Username]),
     case mnesia:transaction(fun() -> qlc:eval(Q) end) of
         {atomic, [User]} ->
@@ -106,7 +106,7 @@ find(Username) ->
 %% Initialization
 
 ensure_user_table() ->
-    Res = mnesia:create_table(user, [{type, ordered_set}, 
+    Res = mnesia:create_table(user, [{type, ordered_set},
                                      {disc_copies, [node()]},
                                      {attributes, record_info(fields, user)}]),
     case Res of
