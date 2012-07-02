@@ -17,7 +17,8 @@ start(_StartType, _StartArgs) ->
     mnesia:start(),
 
     pg2:create(boffo_user_status_server),
-    
+    pg2:create(boffo_user_eventmgr_server),
+
     boffo_user_sup:start_link().
 
 stop(_State) ->

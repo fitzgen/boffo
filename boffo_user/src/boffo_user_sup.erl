@@ -25,5 +25,5 @@ start_link() ->
 
 init([]) ->
     Status_Server = ?CHILD(boffo_user_status, worker),
-    {ok, { {one_for_one, 5, 10}, [Status_Server]} }.
-
+    Event_Server = ?CHILD(boffo_user_eventmgr, worker),
+    {ok, { {one_for_one, 5, 10}, [Status_Server, Event_Server]} }.
