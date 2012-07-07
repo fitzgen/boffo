@@ -17,7 +17,6 @@ start_link() ->
     pg2:join(boffo_user_status_server, Pid),
     {ok, Pid}.
 
-
 handle_call({set_online, Username, Value}, _From, State) ->
     Result = write_rec(#user_status{username=Username, is_online=Value}),
     {reply, Result, State};
@@ -73,7 +72,7 @@ handle_call({remove_game, Username, Game_Id}, _From, State) ->
     end,
     Result = with_status_users(Username, Game_Id, Remove_Game),
     {reply, Result, State}.
-                            
+
 with_status_users(Username, Game_Id, Fn) ->
     Status_Res = get_status(Username),
     Users_Res = get_game_users(Game_Id),
@@ -99,7 +98,7 @@ transaction(Fn) ->
             {error, Reason}
     end.
 
-write_rec(Rec) ->          
+write_rec(Rec) ->
     Write_Rec = fun() ->
         mnesia:write(Rec)
     end,
@@ -136,7 +135,7 @@ get_opponent_usernames(Username) ->
         {ok, Status} ->
             Games_List = sets:to_list(Status#user_status.games),
             Games_Users_List_Fn = fun() ->
-                Q = qlc:q([X#game_users.users || X <- mnesia:table(game_users), 
+                Q = qlc:q([X#game_users.users || X <- mnesia:table(game_users),
                                                  lists:member(X#game_users.game_id, Games_List)]),
                 qlc:e(Q)
             end,
@@ -154,8 +153,8 @@ get_opponent_statuses(Username) ->
     case get_opponent_usernames(Username) of
         {ok, Usernames} ->
             User_Status_Query = fun() ->
-                Q = qlc:q([{X#user_status.username, X#user_status.is_online} || 
-                              X <- mnesia:table(user_status),                                        
+                Q = qlc:q([{X#user_status.username, X#user_status.is_online} ||
+                              X <- mnesia:table(user_status),
                               sets:is_element(X#user_status.username, Usernames)]),
                 qlc:e(Q)
             end,
@@ -182,5 +181,3 @@ handle_cast(_Msg, State) -> {noreply, State}.
 handle_info(_Msg, State) -> {noreply, State}.
 terminate(_Reason, _State) -> ok.
 code_change(_OldVersion, State, _Extra) -> {ok, State}.
-
-

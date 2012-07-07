@@ -1,5 +1,5 @@
 BOFFO_PREFIX:=boffo_
-BOFFO_SUB_APPS:=auth frontend game mgr user
+BOFFO_SUB_APPS:=auth frontend game mgr user feeds
 BOFFO_APPS:=$(addprefix $(BOFFO_PREFIX), $(BOFFO_SUB_APPS)) boffo
 DEVSCRIPT_FILE:=dev.sh
 
