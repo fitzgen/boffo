@@ -10,7 +10,7 @@ init([My_Pid]) ->
 
 handle_event(Event, My_Pid) ->
     %% My_Pid should be a boffo_frontend... use gen_server:call ??
-    My_Pid ! {boffo_user_feed, Event},
+    My_Pid ! Event,
     {ok, My_Pid}.
 
 handle_call(_, State) ->
