@@ -6,9 +6,11 @@
 
 -record(game, {
           id,
+          %% Turns are ordered newest to oldest.
           turns = [],
+          %% Chat messages are ordered newest to oldest.
           chat = [],
-          players = [],
+          players = sets:new(),
           victor = none,
           completed = false,
           logic_pg,

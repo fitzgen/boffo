@@ -1,5 +1,5 @@
 -module(boffo_util).
--export([ensure_mnesia_scheme/1]).
+-export([ensure_mnesia_schema/1]).
 
 ensure_mnesia_schema(Node) ->
     case mnesia:create_schema([Node]) of
