@@ -23,11 +23,12 @@ dialyzer:
 devscript:
 	echo "#!/usr/bin/env sh"                             > $(DEVSCRIPT_FILE)
 	echo "exec erl \\"                                  >> $(DEVSCRIPT_FILE)
-	echo "	-pa ebin \\"					            >> $(DEVSCRIPT_FILE);
-	echo "	-pa deps/*/ebin \\"			                >> $(DEVSCRIPT_FILE);
-	echo "	-eval \"application:load(boffo).\" \\"	    >> $(DEVSCRIPT_FILE);
+	echo "  -pa ebin \\"					            >> $(DEVSCRIPT_FILE);
+	echo "  -pa deps/*/ebin \\"			                >> $(DEVSCRIPT_FILE);
+	echo "  -eval \"application:load(boffo).\" \\"	    >> $(DEVSCRIPT_FILE);
 	echo "  -eval \"application:start(boffo).\" \\"     >> $(DEVSCRIPT_FILE);
 	for app in  $(addprefix $(BOFFO_PREFIX), $(BOFFO_SUB_APPS)) $(BOFFO_APPS); do \
+	  echo "  -pa apps/$$app/ebin \\"                   >> $(DEVSCRIPT_FILE); \
       echo "  -eval \"application:load($$app).\" \\"    >> $(DEVSCRIPT_FILE); \
       echo "  -eval \"application:start($$app).\" \\"   >> $(DEVSCRIPT_FILE); \
 	done
