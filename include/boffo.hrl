@@ -16,3 +16,8 @@
           logic_pg,
           state
          }).
+
+-type uuid()          :: binary().
+-type boffo_game_id() :: uuid().
+
+%% -export_type([uuid/0, boffo_game_id/0]).

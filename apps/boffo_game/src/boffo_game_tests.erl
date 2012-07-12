@@ -1,6 +1,6 @@
 -module(boffo_game_tests).
 -include_lib("eunit/include/eunit.hrl").
--include_lib("boffo_game/include/boffo_game.hrl").
+-include("../../../include/boffo.hrl").
 
 -define(setup(F), {setup, fun start/0, fun stop/1, F}).
 

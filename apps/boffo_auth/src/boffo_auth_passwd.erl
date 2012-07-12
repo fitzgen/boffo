@@ -49,9 +49,9 @@ handle_call({change_password, Username, Old_Password, New_Password}, _From, Stat
             {ok, User} = find(Username),
             {ok, New_Salt} = bcrypt:gen_salt(),
             F = fun() ->
-                mnesia:write(User#user{password=bcrypt:hashpw(New_Password, New_Salt),
-                                       salt=New_Salt})
-	    end,
+                    mnesia:write(User#user{password=bcrypt:hashpw(New_Password, New_Salt),
+                                           salt=New_Salt})
+                end,
             case mnesia:transaction(F) of
                 {atomic, Result} ->
                     {reply, {ok, Result}, State};

@@ -1,3 +1,7 @@
+ebin/
+doc/
+.eunit/
+deps/
 */ebin
 */doc
 */_test

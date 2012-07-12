@@ -5,7 +5,7 @@
 -export([start_link/0]).
 
 -include("$BOFFO_SETTINGS").
--include_lib("boffo_game/include/boffo_game.hrl").
+-include("../../../include/boffo.hrl").
 
 %% Public API
 

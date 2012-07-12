@@ -12,7 +12,7 @@
 %% Include files
 %%--------------------------------------------------------------------
 
--include_lib("boffo_game/include/boffo_game.hrl").
+-include("../../../include/boffo.hrl").
 
 %%--------------------------------------------------------------------
 %% External exports
