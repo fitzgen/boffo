@@ -1,9 +1,0 @@
-%% -*- erlang -*-
-{application, boffo_frontend,
- [{description, "boffo_frontend"},
-  {vsn, "0.1"},
-  {modules, []},
-  {registered, []},
-  {mod, {'boffo_frontend_app', []}},
-  {env, []},
-  {applications, [kernel, stdlib, crypto]}]}.

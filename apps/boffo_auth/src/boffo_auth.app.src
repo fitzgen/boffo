@@ -1,0 +1,13 @@
+{application, boffo_auth,
+ [
+  {description, ""},
+  {vsn, "1"},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib,
+                  boffo
+                 ]},
+  {mod, { boffo_auth_app, []}},
+  {env, []}
+ ]}.

@@ -1,3 +1,7 @@
+ebin/
+doc/
+.eunit/
+deps/
 */ebin
 */doc
 */_test
@@ -14,3 +18,4 @@ erl_crash.dump
 *~
 Mnesia.*
 *#*
+.erl_args
