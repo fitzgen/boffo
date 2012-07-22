@@ -12,19 +12,17 @@ edoc:
 	./rebar doc
 
 test: args_file
-	@rm -rf .eunit
-	@mkdir -p .eunit
 	ERL_FLAGS="-args_file $(ARGS_FILE) -sname boffo_test" ./rebar skip_deps=true eunit
 
 args_file:
-	@echo "-pa \"ebin\""                          > $(ARGS_FILE)
+	@rm -f $(ARGS_FILE)
 	@for dep in $$(ls deps); do                                   \
 	  echo "-pa \"deps/$$dep/ebin\""             >> $(ARGS_FILE); \
 	done
 	@for app in $(BOFFO_APPS); do                                 \
 	  echo "-pa apps/$$app/ebin"                 >> $(ARGS_FILE); \
-      echo "-eval \"application:load($$app).\""  >> $(ARGS_FILE); \
-      echo "-eval \"application:start($$app).\"" >> $(ARGS_FILE); \
+	  echo "-eval \"application:load($$app).\""  >> $(ARGS_FILE); \
+	  echo "-eval \"application:start($$app).\"" >> $(ARGS_FILE); \
 	done
 
 devscript: args_file

@@ -5,6 +5,11 @@
 -define(setup(F), {setup, fun start/0, fun stop/1, F}).
 
 start() ->
+    application:load(boffo),
+    application:start(boffo),
+    application:load(boffo_game),
+    application:start(boffo_game),
+
     {ok, Server} = boffo_game_serv:start_link(),
     pg2:create(test_game_logic),
     {ok, Logic} = test_game_logic:start_link(),
