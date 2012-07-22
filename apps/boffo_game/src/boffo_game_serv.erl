@@ -5,7 +5,7 @@
 -export([start_link/0]).
 
 -include("$BOFFO_SETTINGS").
--include("../../../include/boffo.hrl").
+-include("../../boffo/include/boffo.hrl").
 
 %% Public API
 
