@@ -18,3 +18,4 @@ erl_crash.dump
 *~
 Mnesia.*
 *#*
+.erl_args
