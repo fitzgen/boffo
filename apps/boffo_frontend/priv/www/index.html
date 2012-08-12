@@ -1,8 +1,33 @@
 <html>
-<head>
-<title>It Worked</title>
-</head>
-<body>
-boffo_frontend running.
-</body>
+  <head>
+    <title>Boffo</title>
+    <script src="js/require.js"></script>
+    <script>
+      require.config({
+          baseUrl: 'js'
+      });
+      require(['test_app']);
+    </script>
+    <link href="css/boffo.css" type="text/css" rel="stylesheet" />
+  </head>
+  <body>
+    <div id="auth-area" class="logged-out">
+      <div id="auth-error" style="color: red"></div>
+      <div id="login">
+        Username <input type="text" id="username" /> <br />
+        Password <input type="text" id="password" /><br />
+        <button id="login-btn">login</button>
+      </div>
+      <div id="logout">
+        <button id="logout-btn">logout</button>
+      </div>
+      <div id="loading">
+        loading...
+      </div>
+    </div>
+    <div id="main">
+      <textarea id="chat"></textarea>
+      <input type="text" id="input" />
+    </div>
+  </body>
 </html>

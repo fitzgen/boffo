@@ -20,22 +20,23 @@ start(Options) ->
 stop() ->
     mochiweb_http:stop(?MODULE).
 
+% from http://alexmarandon.com/articles/mochiweb_tutorial/
 loop(Req, DocRoot) ->
     "/" ++ Path = Req:get(path),
     try
-        case Req:get(method) of
-            Method when Method =:= 'GET'; Method =:= 'HEAD' ->
-                case Path of
-                    _ ->
-                        Req:serve_file(Path, DocRoot)
-                end;
-            'POST' ->
-                case Path of
-                    _ ->
+        case dispatch(Req, boffo_frontend_views:urls()) of
+            none ->
+                % No request handler found
+                case filelib:is_file(filename:join([DocRoot, Path])) of
+                    true ->
+                        % If there's a static file, serve it
+                        Req:serve_file(Path, DocRoot);
+                    false ->
+                        % Otherwise the page is not found
                         Req:not_found()
                 end;
-            _ ->
-                Req:respond({501, [], []})
+            Response ->
+                Response
         end
     catch
         Type:What ->
@@ -53,6 +54,29 @@ loop(Req, DocRoot) ->
 
 get_option(Option, Options) ->
     {proplists:get_value(Option, Options), proplists:delete(Option, Options)}.
+
+% from http://alexmarandon.com/articles/mochiweb_tutorial/
+dispatch(_, []) -> none;
+dispatch(Req, [{Regexp, Function}|T]) ->
+    "/" ++ Path = Req:get(path),
+    Method = Req:get(method),
+    Match = re:run(Path, Regexp, [global, {capture, all_but_first, list}]),
+    case Match of
+        {match,[MatchList]} ->
+            % We found a regexp that matches the current URL path
+            case length(MatchList) of
+                0 ->
+                    % We didn't capture any URL parameters
+                    Function(Method, Req);
+                Length when Length > 0 ->
+                    % We pass URL parameters we captured to the function
+                    Args = lists:append([[Method, Req], MatchList]),
+                    %apply(greeting_views, Function, Args)
+                    apply(Function, Args)
+            end;
+        _ ->
+            dispatch(Req, T)
+    end.
 
 %%
 %% Tests

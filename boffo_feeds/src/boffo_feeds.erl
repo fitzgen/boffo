@@ -29,13 +29,13 @@ init(_Options) ->
 %% Server API
 
 handle_call({create_feed, Name, Callback_Mod}, _From, State) ->
-    {reply, new_feed(Name, Callback_Mod), State};
+    {reply, create_feed(Name, Callback_Mod), State};
 
 handle_call({delete_feed, Name}, _From, State) ->
     {reply, delete_feed(Name), State};
 
-handle_call({join_feed, Name, My_Pid}, _From, State) ->
-    {reply, join_feed(Name, My_Pid), State};
+handle_call({join_feed, Name, My_Pid, Resp}, _From, State) ->
+    {reply, join_feed(Name, My_Pid, Resp), State};
 
 handle_call({leave_feed, Name, My_Pid}, _From, State) ->
     {reply, leave_feed(Name, My_Pid), State};
@@ -45,16 +45,17 @@ handle_call({push_event, Name, Event}, _From, State) ->
 
 %% Implementation
 
-new_feed(Name, Callback_Mod) ->
+create_feed(Name, Callback_Mod) ->
+    delete_feed(Name),
     {ok, Pid} = gen_event:start_link(),
     write_feed(Name, Pid, Callback_Mod).
 
-join_feed(Name, My_Pid) ->
+join_feed(Name, My_Pid, Resp) ->
     case get_feed(Name) of
         {ok, Feed} ->
             Callback_Mod = Feed#feed.callback_mod,
             Handler_Id = {Callback_Mod, make_ref()},
-            gen_event:add_sup_handler(Feed#feed.event_pid, Handler_Id, [My_Pid]),
+            gen_event:add_sup_handler(Feed#feed.event_pid, Handler_Id, [Resp]),
             write_subscription(Name, My_Pid, Handler_Id);
         {error, Reason} ->
             {error, Reason}

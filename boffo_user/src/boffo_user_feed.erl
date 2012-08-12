@@ -8,10 +8,10 @@
 init([My_Pid]) ->
     {ok, My_Pid}.
 
-handle_event(Event, My_Pid) ->
+handle_event(Event, Resp) ->
     %% My_Pid should be a boffo_frontend... use gen_server:call ??
-    My_Pid ! Event,
-    {ok, My_Pid}.
+    Resp:write_chunk(Event),
+    {ok, Resp}.
 
 handle_call(_, State) ->
     {ok, ok, State}.
