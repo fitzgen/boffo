@@ -19,6 +19,7 @@ ensure_started(App) ->
 %% @spec start() -> ok
 %% @doc Start the boffo_frontend server.
 start() ->
+    io:format("boffo_frontend.erl"),
     boffo_frontend_deps:ensure(),
     ensure_started(crypto),
     application:start(boffo_frontend).
