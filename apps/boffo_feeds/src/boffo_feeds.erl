@@ -29,13 +29,14 @@ init(_Options) ->
 %% Server API
 
 handle_call({create_feed, Name, Callback_Mod}, _From, State) ->
+    ensure_tables(),
     {reply, create_feed(Name, Callback_Mod), State};
 
 handle_call({delete_feed, Name}, _From, State) ->
     {reply, delete_feed(Name), State};
 
-handle_call({join_feed, Name, My_Pid, Resp}, _From, State) ->
-    {reply, join_feed(Name, My_Pid, Resp), State};
+handle_call({join_feed, Name, My_Pid, Args}, _From, State) ->
+    {reply, join_feed(Name, My_Pid, Args), State};
 
 handle_call({leave_feed, Name, My_Pid}, _From, State) ->
     {reply, leave_feed(Name, My_Pid), State};
@@ -50,12 +51,12 @@ create_feed(Name, Callback_Mod) ->
     {ok, Pid} = gen_event:start_link(),
     write_feed(Name, Pid, Callback_Mod).
 
-join_feed(Name, My_Pid, Resp) ->
+join_feed(Name, My_Pid, Args) ->
     case get_feed(Name) of
         {ok, Feed} ->
             Callback_Mod = Feed#feed.callback_mod,
             Handler_Id = {Callback_Mod, make_ref()},
-            gen_event:add_sup_handler(Feed#feed.event_pid, Handler_Id, [Resp]),
+            gen_event:add_sup_handler(Feed#feed.event_pid, Handler_Id, Args),
             write_subscription(Name, My_Pid, Handler_Id);
         {error, Reason} ->
             {error, Reason}
@@ -107,15 +108,21 @@ single_result(TRes) ->
 
 write_feed(Name, Pid, Callback_Mod) ->
     T = fun() ->
-                mnesia:write(#feed{name=Name,
-                                   event_pid=Pid,
-                                   callback_mod=Callback_Mod})
+                Feed = #feed{name=Name,
+                             event_pid=Pid,
+                             callback_mod=Callback_Mod},
+                mnesia:write(Feed)
         end,
     transaction(T).
 
 delete_feed(Name) ->
     T = fun() ->
-                mnesia:delete({feed, Name})
+            mnesia:delete({feed, Name}),
+            Q = qlc:q([X#subscription.handler_id || X <- mnesia:table(subscription),
+                                                      X#subscription.feed_name =:= Name]),
+            IDs = qlc:e(Q),
+            Delete = fun (Id) -> mnesia:delete({subscription, Id}) end,
+            lists:foreach(Delete, IDs)
         end,
     transaction(T).
 

@@ -16,7 +16,6 @@ start() ->
 %% @spec start(_Type, _StartArgs) -> ServerRet
 %% @doc application start callback for boffo_frontend.
 start(_Type, _StartArgs) ->
-    io:format(user, "starting frontend", []),
     boffo_frontend_deps:ensure(),
     boffo_frontend_sup:start_link().
 

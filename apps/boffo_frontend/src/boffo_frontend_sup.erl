@@ -41,7 +41,6 @@ upgrade() ->
 %% @spec init([]) -> SupervisorTree
 %% @doc supervisor callback.
 init([]) ->
-    io:format(user, "starting frontend sup", []),
     Web = web_specs(boffo_frontend_web, 8080),
     Processes = [Web],
     Strategy = {one_for_one, 10, 10},
