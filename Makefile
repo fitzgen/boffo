@@ -11,7 +11,7 @@ deps:
 edoc:
 	./rebar doc
 
-test: args_file
+test: clean all args_file
 	ERL_FLAGS="-args_file $(ARGS_FILE) -sname boffo_test" ./rebar skip_deps=true eunit
 
 args_file:
