@@ -1,3 +1,4 @@
+%%-*- mode: erlang -*-
 %% @author Mochi Media <dev@mochimedia.com>
 %% @copyright boffo_frontend Mochi Media <dev@mochimedia.com>
 

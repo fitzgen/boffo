@@ -1,3 +1,4 @@
+%%-*- mode: erlang -*-
 -module(boffo_user_app).
 
 -behaviour(application).

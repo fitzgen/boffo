@@ -1,3 +1,4 @@
+%%-*- mode: erlang -*-
 -module(boffo_game_tests).
 -include_lib("eunit/include/eunit.hrl").
 -include("../../boffo/include/boffo.hrl").

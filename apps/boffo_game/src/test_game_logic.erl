@@ -1,3 +1,4 @@
+%%-*- mode: erlang -*-
 %%%-------------------------------------------------------------------
 %%% File    : test_game_logic.erl
 %%% Author  : Nick Fitzgerald <fitzgen@farnsworth>

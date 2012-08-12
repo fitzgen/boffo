@@ -1,3 +1,4 @@
+%%-*- mode: erlang -*-
 -module(boffo_api_game).
 -export([create_game/2, get_game/2, add_turn/4, add_chat/4]).
 

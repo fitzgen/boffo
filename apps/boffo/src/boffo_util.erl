@@ -1,3 +1,4 @@
+%%-*- mode: erlang -*-
 -module(boffo_util).
 -export([ensure_mnesia_schema/1]).
 

@@ -1,3 +1,4 @@
+%%-*- mode: erlang -*-
 % Copyright (c) 2008, Travis Vachon
 % All rights reserved.
 %

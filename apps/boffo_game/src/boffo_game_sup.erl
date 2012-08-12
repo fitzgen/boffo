@@ -1,3 +1,4 @@
+%%-*- mode: erlang -*-
 -module(boffo_game_sup).
 -behaviour(supervisor).
 

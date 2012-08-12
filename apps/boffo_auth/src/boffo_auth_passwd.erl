@@ -1,3 +1,4 @@
+%%-*- mode: erlang -*-
 -module(boffo_auth_passwd).
 -behaviour(gen_server).
 -include_lib("stdlib/include/qlc.hrl").

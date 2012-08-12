@@ -1,3 +1,4 @@
+%%-*- mode: erlang -*-
 -module(boffo_api_auth).
 
 -export([get_user/1, create_token/1, delete_token/1]).
