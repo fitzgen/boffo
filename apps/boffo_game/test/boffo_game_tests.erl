@@ -9,12 +9,16 @@ start() ->
     application:start(boffo),
     application:start(boffo_game),
 
+    error_logger:tty(false),
+    error_logger:logfile({open, "log"}),
+
     {ok, Server} = boffo_game_serv:start_link(),
     pg2:create(test_game_logic),
     {ok, Logic} = test_game_logic:start_link(),
     {Server, Logic}.
 
 stop({Server, Logic}) ->
+    error_logger:logfile(close),
     exit(Server, normal),
     pg2:delete(boffo_game_server),
     exit(Logic, normal),

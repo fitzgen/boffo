@@ -1,5 +1,4 @@
-%%-*- mode: erlang -*-
--module(boffo_user_sup).
+-module(boffo_feeds_sup).
 
 -behaviour(supervisor).
 
@@ -24,5 +23,5 @@ start_link() ->
 %% ===================================================================
 
 init([]) ->
-    Status_Server = ?CHILD(boffo_user_status, worker),
-    {ok, { {one_for_one, 5, 10}, [Status_Server]} }.
+    Feeds_Server = ?CHILD(boffo_feeds, worker),
+    {ok, { {one_for_one, 5, 10}, [Feeds_Server]} }.

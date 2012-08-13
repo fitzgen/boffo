@@ -6,4 +6,5 @@
   {registered, []},
   {mod, {'boffo_frontend_app', []}},
   {env, []},
-  {applications, [kernel, stdlib, crypto, boffo, mochiweb]}]}.
+  {applications, [kernel, stdlib, crypto, boffo]},
+  {included_applications, [mochiweb]}]}.
