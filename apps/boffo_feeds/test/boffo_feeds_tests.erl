@@ -7,10 +7,13 @@
 start() ->
     application:start(boffo),
     application:start(boffo_feeds),
+    error_logger:tty(false),
+    error_logger:logfile({open, "log"}),
     ok.
 
 stop(ok) ->
     boffo_api_feeds:delete_feed("test_feed"),
+    error_logger:logfile(close),
     ok.
 
 boffo_feeds_test_ () ->

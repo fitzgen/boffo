@@ -18,7 +18,14 @@ start_link() ->
     {ok, Pid}.
 
 handle_call({set_online, Username, Value}, _From, State) ->
-    Result = write_rec(#user_status{username=Username, is_online=Value}),
+    Status = case get_status(Username) of
+                 {ok, Existing_Status} ->
+                     Existing_Status#user_status{is_online=Value};
+                 _ ->
+                     New_Status = new_status(Username),
+                     New_Status#user_status{is_online=Value}
+             end,
+    Result = write_rec(Status),
     {reply, Result, State};
 
 handle_call({get_online, Username}, _From, State) ->
@@ -71,7 +78,18 @@ handle_call({remove_game, Username, Game_Id}, _From, State) ->
         transaction(Write_Both)
     end,
     Result = with_status_users(Username, Game_Id, Remove_Game),
-    {reply, Result, State}.
+    {reply, Result, State};
+
+handle_call({clear_games, Username}, _From, State) ->
+    case get_status(Username) of
+        {ok, Status} ->
+            Update = fun() ->
+                mnesia:write(Status#user_status{games=sets:new()})
+            end,
+            {reply, transaction(Update), State};
+        {error, Reason} ->
+            {reply, {error, Reason}, State}
+    end.
 
 with_status_users(Username, Game_Id, Fn) ->
     Status_Res = get_status(Username),

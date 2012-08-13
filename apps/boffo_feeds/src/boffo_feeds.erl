@@ -4,6 +4,7 @@
 
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 -export([start_link/0]).
+-import(boffo_util, [transaction/1, single_result/1]).
 
 -record(feed, {name, event_pid, callback_mod}).
 -record(subscription, {handler_id, feed_name, subscriber_pid}).
@@ -55,7 +56,7 @@ join_feed(Name, My_Pid, Args) ->
     case get_feed(Name) of
         {ok, Feed} ->
             Callback_Mod = Feed#feed.callback_mod,
-            Handler_Id = {Callback_Mod, make_ref()},
+            Handler_Id = {Callback_Mod, uuid:v4()},
             gen_event:add_sup_handler(Feed#feed.event_pid, Handler_Id, Args),
             write_subscription(Name, My_Pid, Handler_Id);
         {error, Reason} ->
@@ -88,24 +89,6 @@ push_event(Name, Event) ->
 
 
 %% mnesia calls
-transaction(Fn) ->
-    case mnesia:transaction(Fn) of
-        {atomic, Result} ->
-            {ok, Result};
-        {aborted, Reason} ->
-            {error, Reason}
-    end.
-
-single_result(TRes) ->
-    case TRes of
-        {ok, [Single]} ->
-            {ok, Single};
-        {ok, []} ->
-            {error, no_result};
-        {error, Reason} ->
-            {error, Reason}
-    end.
-
 write_feed(Name, Pid, Callback_Mod) ->
     T = fun() ->
                 Feed = #feed{name=Name,
