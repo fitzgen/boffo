@@ -14,6 +14,11 @@ start() ->
     start(normal, []).
 
 start(_StartType, _StartArgs) ->
+    boffo_util:ensure_mnesia_schema(node()),
+    mnesia:start(),
+
+    pg2:create(boffo_mgr_server),
+
     boffo_mgr_sup:start_link().
 
 stop(_State) ->

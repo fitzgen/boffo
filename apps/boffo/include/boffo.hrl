@@ -1,3 +1,4 @@
+%%-*- mode: erlang -*-
 -record(chat, {
           user,
           timestamp,
