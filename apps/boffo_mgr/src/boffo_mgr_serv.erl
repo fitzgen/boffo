@@ -126,20 +126,13 @@ ensure_mgr_table() ->
 
 find(Game_Id) ->
     F = fun () -> mnesia:read(id_node, Game_Id) end,
-    case mnesia:transaction(F) of
-        {atomic, [Id_Node]} ->
-            {ok, Id_Node};
-        {atomic, []} ->
-            {error, "Not found"};
-        {aborted, Reason} ->
-            {error, Reason}
-    end.
+    boffo_util:single_result(boffo_util:transaction(F)).
 
 save(Id_Node) ->
     F = fun () -> mnesia:write(Id_Node) end,
-    case mnesia:transaction(F) of
-        {atomic, _} ->
+    case boffo_util:transaction(F) of
+        {ok, _} ->
             ok;
-        {aborted, Reason} ->
+        {error, Reason} ->
             {error, Reason}
     end.
