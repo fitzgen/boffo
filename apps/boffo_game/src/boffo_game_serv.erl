@@ -26,11 +26,11 @@ handle_call({chat, {Game_Id, User, Message}}, _From, State) ->
                                message = Message
                               }),
             F = fun () -> mnesia:write(Game1) end,
-            case mnesia:transaction(F) of
-                {atomic, _Result} ->
-                                                % TODO: notify events here.
+            case boffo_util:transaction(F) of
+                {ok, _Result} ->
+                    % TODO: notify events here.
                     {reply, ok, State};
-                {aborted, Reason} ->
+                {error, Reason} ->
                     {reply, {error, Reason}, State}
             end;
         {error, Reason} ->
@@ -46,11 +46,11 @@ handle_call({turn, {Game_Id, User, Turn_Data}}, _From, State) ->
                               turns = [{User, Turn_Data} | Game1#game.turns]
                              },
                     F = fun () -> mnesia:write(Game2) end,
-                    case mnesia:transaction(F) of
-                        {atomic, _Result} ->
+                    case boffo_util:transaction(F) of
+                        {ok, _Result} ->
                             % TODO: notify events here.
                             {reply, ok, State};
-                        {aborted, Reason} ->
+                        {error, Reason} ->
                             {reply, {error, Reason}, State}
                     end;
                 {error, Reason} ->
@@ -64,11 +64,11 @@ handle_call({create, Game_Logic_PG, Users}, _From, State) ->
     case new_game(Game_Logic_PG, Users) of
         {ok, Game} ->
             F = fun () -> mnesia:write(Game) end,
-            case mnesia:transaction(F) of
-                {atomic, _Result} ->
+            case boffo_util:transaction(F) of
+                {ok, _Result} ->
                     % TODO: notify events here.
                     {reply, {ok, Game#game.id}, State};
-                {aborted, Reason} ->
+                {error, Reason} ->
                     {reply, {error, Reason}, State}
             end;
         {error, Reason} ->
@@ -125,14 +125,7 @@ ensure_game_table() ->
 
 find(Game_Id) ->
     F = fun () -> mnesia:read(game, Game_Id) end,
-    case mnesia:transaction(F) of
-        {atomic, [Game]} ->
-            {ok, Game};
-        {atomic, []} ->
-            {error, "Not found"};
-        {aborted, Reason} ->
-            {error, Reason}
-    end.
+    boffo_util:single_result(boffo_util:transaction(F)).
 
 user_in_game(User, Game) ->
     sets:is_element(User, Game#game.players).
