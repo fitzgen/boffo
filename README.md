@@ -1,5 +1,7 @@
 # Boffo
 
+[![Build Status](https://travis-ci.org/fitzgen/boffo.png?branch=master)](https://travis-ci.org/fitzgen/boffo)
+
 Boffo is a turn based gaming platform.
 
 ## Developing
